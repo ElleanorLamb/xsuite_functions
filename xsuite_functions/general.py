@@ -1,30 +1,35 @@
-import numpy as np
 import xobjects as xo
 import xtrack as xt
 import xpart as xp
+import xdeps as xd
+from xdeps.madxutils import MadxEval
+
+
+
 import pyarrow 
 import pandas as pd
 from matplotlib import pyplot as plt 
+import numpy as np
 
 
 import json
-import xtrack as xt
-import xpart as xp
-import xobjects as xo 
-import numpy as np
+import scipy as sp
+import math
+
+import conda
+
 from scipy.constants import c as speed_c
 from scipy.constants import e as qe
 from scipy.constants import m_p
 
-from matplotlib import pyplot as plt 
-import scipy as sp
-import math
-import json
-import xdeps as xd
-from xdeps.madxutils import MadxEval
-import conda
+
 
 def load_tracker(gamma, file_with_json=str, Cpu=True):
+    """
+    args ; gamma, file sting, Cpu true or false
+    outputs ; tracker, context, part_ref
+    
+    """
 
     with open(file_with_json,'r') as fid:
         loaded_dct = json.load(fid)
