@@ -31,7 +31,6 @@ setup(
         'scipy',
         'xsuite',
         'conda',
-        'json',
         'pyarrow',
         'xbeamfit',
         'pyabel',
