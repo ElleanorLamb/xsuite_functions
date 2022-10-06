@@ -30,5 +30,12 @@ setup(
         'pandas',
         'scipy',
         'xsuite',
+        'conda',
+        'json',
+        'pyarrow',
+        'xbeamfit',
+        'pyabel',
+        'sklearn',
+        
     ],
 )
