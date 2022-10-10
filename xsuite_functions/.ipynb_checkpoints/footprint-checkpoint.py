@@ -8,7 +8,7 @@ import NAFFlib
 import xtrack as xt
 import xpart as xp
 import xobjects as xo
-
+import pandas as pd
 
 ####################################################################
 
@@ -43,60 +43,22 @@ def generate_coordGrid(xRange,yRange,labels = ['x','y'],nPoints=100):
 
 ####################################################################
 
-def plot_footprint(qx,qy,coords_per_arc,title=str,):
-    plot_object = plt.figure('FOOTPRINT')
-    plt.suptitle(title)
-    
-    n = coords_per_arc
-
-    points=8
-
-    plt.scatter(q_x[0:n],q_y[0:n], label = '0.3 $\sigma$ ', s=points)
-    plt.scatter(q_x[n:2*n],q_y[n:2*n], label = '1.0 $\sigma$ ',s=points)
-    plt.scatter(q_x[2*n:3*n],q_y[2*n:3*n], label = '2.0 $\sigma$ ',s=points)
-    plt.scatter(q_x[3*n:4*n],q_y[3*n:4*n], label = '3.0 $\sigma$', s=points)
-    plt.scatter(q_x[4*n:5*n],q_y[4*n:5*n], label = '4.0 $\sigma$ ', s=points)
-    plt.scatter(q_x[5*n:6*n],q_y[5*n:6*n], label = '5.0 $\sigma$ ', s=points)
-    plt.scatter(q_x[6*n:7*n],q_y[6*n:7*n], label = '6.0 $\sigma$ ', s=points)
-
-    for i in range(n):
-        q_x_s1c = [q_x[0+i],q_x[n+i],q_x[2*n+i],q_x[3*n+i],q_x[4*n+i],q_x[5*n+i],q_x[6*n+i]]
-        q_y_s1c = [q_y[0+i],q_y[n+i],q_y[2*n+i],q_y[3*n+i],q_y[4*n+i],q_y[5*n+i],q_y[6*n+i]]
-        plt.plot(q_x_s1c,q_y_s1c,'darkgrey')
 
 
-
-    plt.plot(q_x[0:n-1],q_y[0:n-1],color='darkgrey',)
-    plt.plot(q_x[n:2*n-1],q_y[n:2*n-1],color='darkgrey',)
-    plt.plot(q_x[2*n:3*n-1],q_y[2*n:3*n-1], color='darkgrey',)
-    plt.plot(q_x[3*n:4*n-1],q_y[3*n:4*n-1], color='darkgrey',)
-    plt.plot(q_x[4*n:5*n-1],q_y[4*n:5*n-1], color='darkgrey',)
-    plt.plot(q_x[5*n:6*n-1],q_y[5*n:6*n-1],color='darkgrey',)
-    plt.plot(q_x[6*n:7*n],q_y[6*n:7*n], color='darkgrey',)
-
-    plt.ylabel('$Q_y$')
-    plt.xlabel('$Q_x$')
-
-    plt.tight_layout()
-    plt.axis('equal');
-    plt.xticks(rotation=45)
-    plt.grid()
-    plt.legend()
-    
-    return
-
-################################################################################
-
-def get_max_tune(x_n,y_n,tracker):
+def get_max_tune(x_n,y_n,tracker,tune_search=4):
     '''
-    input your tracker after the last track 
-    returns all the maximum amplitude tunes in x and y for each particle
+    inputs 
+    
+    x_n, y_n the normalised coords numpy array of your particle distribution into the track
+    your tracker after the last track 
+    
+    returns 
+    q_x,q_y arrays ; all the maximum amplitude tunes in x and y for each particle
 
     '''
     
-    tune_search = 6 # find 6 maxima along the spectrum 
     q_x = []
-    for k in range(len(x)):
+    for k in range(len(x_n)):
         naff_tune = NAFFlib.get_tunes_all(tracker.record_last_track.x[k].copy(),h)
         amp = []
         for i in range(tune_search):
@@ -107,7 +69,7 @@ def get_max_tune(x_n,y_n,tracker):
             if amp[i]==np.max(amp):
                 q_x.append(np.abs(naff_tune[0][i]))
     q_y = []
-    for k in range(len(y)):
+    for k in range(len(y_n)):
         naff_tune = NAFFlib.get_tunes_all(tracker.record_last_track.y[k].copy(),h)
         amp = []
         for i in range(tune_search):
