@@ -15,9 +15,14 @@ import xbeamfit as xb
 from abel.direct import direct_transform
 from abel.tools.analytical import GaussianAnalytical
 
-from xbeamfit import fitting # need ElleanorLamb/xbeamfit 
+from xbeamfit import fitting # need ElleanorLamb/xbeamfit not yet on GitLab - crashing 
 from xbeamfit import distributions 
 import xbeamfit as xb 
+
+
+from scipy import interpolate
+from numpy import trapz
+import scipy.integrate as integrate
 
 #################### create a gaussian and forward transform ##################
 
@@ -63,10 +68,52 @@ def forward_transform_qGaussian(start, end, steps, mu, q, b, A,correction=True):
     return r, forward_transform, qgauss
 
 
-################# inverse abel transfrom ################
 
-def inverse_transform(r,forward_transform,correction=True):
-    return direct_transform(forward_transform,  dr=np.diff(r)[0], direction="inverse", correction=correction)
+############# find the area under an abel transform of a distribution between a certain sigma ##################
 
 
+def calculate_particle_percentage(x_y, HV_fit_array, lower_sigma, upper_sigma):
+    
+    '''
+    Inputs: 
+    HV_fit_array: Fit of the horizontal or vertical profile, eg a q-gaussian ABOVE 0 
+    x_y: array of the values in x or y for the fit
+    lower_sigma: lower sigma bound for finding the population of particles
+    upper_simga: upper bound for finding the population of the particles 
+    
+    Outputs: 
+    df: dataframe with the original distribution, the x_y and the abel transform
+    percentage_desired_limits: percentage of the distribution within the upper and lower bounds 
+    '''
+    # Inverse Abel transform the distribution using pyabel
+    
+    abel_transform =direct_transform(HV_fit_array, dr=np.diff(x_y)[0], direction="inverse", correction=True)
+
+        
+    
+    # make a dataframe 
+    
+    dt = {'r_n': r, 'fitted_distribution':HV_fit_array, 'inv_abel':abel_transform}
+    df = pd.DataFrame(data=dt)
+    
+    # interpolate distribution 
+    interp = interpolate.interp1d(df['r_n'], df['inv_abel'])
+    
+    x_y_new = np.arange(lower_sigma, upper_sigma, np.diff(x_y)[0] )
+    curve_to_integrate = f(x_y_new)   
+    
+    # integrate between the upper and lower bound 
+    
+    area_sigma = trapz(curve_to_integrate, dx=np.diff(x_y_new)[0])
+    total_area = trapz(HV_fit_array, dx=np.diff(x_y_new)[0]) # should be 0.5 if normalised 
+
+    percentage_desired_limits = (area_sigma/area_q_gauss)*100
+    print('percentage in desired limit ', percentage_desired_limits, '%')
+    
+    return df, percentage_desired_limits
+
+
+    
+    
+    
  
