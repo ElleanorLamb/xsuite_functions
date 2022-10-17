@@ -93,7 +93,7 @@ def calculate_particle_percentage(x_y, HV_fit_array, lower_sigma, upper_sigma):
     
     # make a dataframe 
     
-    dt = {'r_n': r, 'fitted_distribution':HV_fit_array, 'inv_abel':abel_transform}
+    dt = {'r_n': x_y, 'fitted_distribution':HV_fit_array, 'inv_abel':abel_transform}
     df = pd.DataFrame(data=dt)
     
     # interpolate distribution 
