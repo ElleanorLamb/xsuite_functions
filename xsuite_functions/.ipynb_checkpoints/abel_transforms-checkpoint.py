@@ -10,13 +10,14 @@ import math
 import matplotlib.pyplot as plt
 from time import time
 
-
+import xbeamfit as xb
 
 from abel.direct import direct_transform
 from abel.tools.analytical import GaussianAnalytical
 
 from xbeamfit import fitting # need ElleanorLamb/xbeamfit 
 from xbeamfit import distributions 
+import xbeamfit as xb 
 
 #################### create a gaussian and forward transform ##################
 

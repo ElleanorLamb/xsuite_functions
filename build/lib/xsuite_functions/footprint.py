@@ -45,7 +45,10 @@ def generate_coordGrid(xRange,yRange,labels = ['x','y'],nPoints=100):
 
 
 
-def get_max_tune(x_n,y_n,tracker,tune_search=4):
+
+
+
+def get_max_tune(x_n,y_n,tracker,index,tune_search=4):
     '''
     inputs 
     
@@ -59,7 +62,7 @@ def get_max_tune(x_n,y_n,tracker,tune_search=4):
     
     q_x = []
     for k in range(len(x_n)):
-        naff_tune = NAFFlib.get_tunes_all(tracker.record_last_track.x[k].copy(),h)
+        naff_tune = NAFFlib.get_tunes_all(tracker.record_last_track.x[index,k].copy(),tune_search)
         amp = []
         for i in range(tune_search):
 
@@ -70,7 +73,7 @@ def get_max_tune(x_n,y_n,tracker,tune_search=4):
                 q_x.append(np.abs(naff_tune[0][i]))
     q_y = []
     for k in range(len(y_n)):
-        naff_tune = NAFFlib.get_tunes_all(tracker.record_last_track.y[k].copy(),h)
+        naff_tune = NAFFlib.get_tunes_all(tracker.record_last_track.y[index,k].copy(),tune_search)
         amp = []
         for i in range(tune_search):
             amp.append(np.abs(np.abs(naff_tune[1][i])))
@@ -84,4 +87,26 @@ def get_max_tune(x_n,y_n,tracker,tune_search=4):
 
 ###########################################################
 
+
+def get_naff_tune_FMA(x_n,y_n,tracker,index):
+    '''
+    Inputs: 
+    normalised of particles x_n, y_n, tracker from last GPU track, index of tune to find (0,1) 
+    giving first and final tune
+    Outputs:
+    array of tunes q_x, q_y 
+    '''
+    
+    q_x = []
+    q_y = []
+    
+    for i in range(len(x_n)):
+        q_x.append(NAFFlib.get_tune(tracker.record_last_track.x[index,i].copy(), 2 ))
+    for i in range(len(y_n)):
+        q_y.append(NAFFlib.get_tune(tracker.record_last_track.y[index,i].copy(), 2 ))
+    return q_x, q_y
+                   
+                   
+
+    
     
