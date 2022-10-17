@@ -19,7 +19,7 @@ from xbeamfit import fitting # need ElleanorLamb/xbeamfit not yet on GitLab - cr
 from xbeamfit import distributions 
 import xbeamfit as xb 
 
-
+import pandas as pd
 from scipy import interpolate
 from numpy import trapz
 import scipy.integrate as integrate
@@ -93,21 +93,21 @@ def calculate_particle_percentage(x_y, HV_fit_array, lower_sigma, upper_sigma):
     
     # make a dataframe 
     
-    dt = {'r_n': r, 'fitted_distribution':HV_fit_array, 'inv_abel':abel_transform}
+    dt = {'r_n': x_y, 'fitted_distribution':HV_fit_array, 'inv_abel':abel_transform}
     df = pd.DataFrame(data=dt)
     
     # interpolate distribution 
     interp = interpolate.interp1d(df['r_n'], df['inv_abel'])
     
     x_y_new = np.arange(lower_sigma, upper_sigma, np.diff(x_y)[0] )
-    curve_to_integrate = f(x_y_new)   
+    curve_to_integrate = interp(x_y_new)   
     
     # integrate between the upper and lower bound 
     
     area_sigma = trapz(curve_to_integrate, dx=np.diff(x_y_new)[0])
     total_area = trapz(HV_fit_array, dx=np.diff(x_y_new)[0]) # should be 0.5 if normalised 
 
-    percentage_desired_limits = (area_sigma/area_q_gauss)*100
+    percentage_desired_limits = (area_sigma/total_area)*100
     print('percentage in desired limit ', percentage_desired_limits, '%')
     
     return df, percentage_desired_limits
