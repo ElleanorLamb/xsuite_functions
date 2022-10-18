@@ -87,9 +87,7 @@ def calculate_particle_percentage(x_y, HV_fit_array, lower_sigma, upper_sigma):
     '''
     # Inverse Abel transform the distribution using pyabel
     
-    abel_transform =direct_transform(HV_fit_array, dr=np.diff(x_y)[0], direction="inverse", correction=True)
-
-        
+    abel_transform =direct_transform(HV_fit_array, dr=np.diff(x_y)[0], direction="inverse", correction=True)        
     
     # make a dataframe 
     
